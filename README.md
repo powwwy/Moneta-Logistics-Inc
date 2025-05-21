@@ -1,5 +1,4 @@
-# Moneta Logistics Incorporated
-# Moneta Logistics Inc. 🚢📦🌍
+# Moneta Logistics Incorporated 🚢📦🌍 
 
 Moneta Logistics Inc. is a distributed Java-based logistics management system designed to simulate international trade operations between countries. It features a modular role-based structure where various actors manage ports, ships, containers, and trade transactions through coordinated interactions.
 
