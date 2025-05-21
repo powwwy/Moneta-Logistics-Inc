@@ -1,3 +1,0 @@
-id, country_id, portNumber, maxContainerCapacity, maxNoOfShips, status
-1,1,KEN-001,500,10,Operational
-2,2,JPN-002,800,15,Under Maintenance

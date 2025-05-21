@@ -1,3 +1,0 @@
-id,countryId,number,name,arrivalDate,departureDate,status,operatingSegment
-1,1,SHP-1001,Endeavour,2025-06-01,2025-06-10,Active,Container
-2,2,SHP-2002,Odyssey,2025-06-03,2025-06-12,Docked,Bulk
