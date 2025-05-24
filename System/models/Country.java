@@ -1,5 +1,3 @@
-
-//country manager
 // system/models/Country.java
 package System.models;
 
