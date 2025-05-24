@@ -7,6 +7,11 @@ import java.util.*;
 
 public class Main {
     public static void main(String[] args) {
+         List<Container> container = ContainerManager.loadContainers();
+        System.out.println("\nContainers:");
+        for (Container k : container) {
+            System.out.println(k);
+        }
         List<Trade> trade = TradeManager.loadTrades();
         System.out.println("\nTrades:");
         for (Trade t: trade) {
