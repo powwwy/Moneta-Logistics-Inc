@@ -1,9 +1,8 @@
 // system/Main.java
 package System;
 
-import System.models.*;
 import System.managers.*;
-
+import System.models.*;
 import java.util.*;
 
 public class Main {
@@ -23,5 +22,9 @@ public class Main {
         for (var entry : portAssignments.entrySet()) {
             System.out.println("Port " + entry.getKey() + " → Containers " + entry.getValue());
         }
-    }
+        List<Employee> Employee = EmployeeManager.loadEmployees();
+        System.out.println("\nEmployees:");
+        for (Employee p: Employee) {
+            System.out.println(p); }
+}
 }
