@@ -1,4 +1,0 @@
-ship_id,container_id
-1,1
-1,2
-2,3

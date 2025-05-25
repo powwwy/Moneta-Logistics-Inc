@@ -1,4 +1,0 @@
-id,containerCode,transitCode,typeName,locationType,locationId
-1,CONT-101,TRANS-A12,Standard,port,1
-2,CONT-102,TRANS-B45,Refrigerated,ship,2
-3,CONT-103,TRANS-C78,Open Top,port,2
