@@ -1,40 +1,45 @@
-// System/managers/ShipManager.java
 package System.managers;
-
 import System.models.Ship;
+import java.util.Scanner;
 
-import java.io.*;
-import java.util.*;
+public class ShipManager extends User{
+    private static final Scanner scanner = new Scanner(System.in);
 
-public class ShipManager {
-    private static final String FILE_PATH = "data/ships.txt";
+    public ShipManager() {
+        super();
+    }
 
-    public static List<Ship> loadShips() {
-        List<Ship> ships = new ArrayList<>();
-        try (BufferedReader br = new BufferedReader(new FileReader(FILE_PATH))) {
-            String line;
-            br.readLine(); // skip header
+    public void showMenu() {
+        while (true) {
+            System.out.println("\n=== Ship Manager Menu ===");
+            System.out.println("1. Login to Ship");
+            System.out.println("2. Dock at Port");
+            System.out.println("3. Depart from Port");
+            System.out.println("4. Manage Containers (TODO)");
+            System.out.println("5. Exit");
+            System.out.print("Choose an option: ");
 
-            while ((line = br.readLine()) != null) {
-                String[] parts = line.split(",", -1);
-                if (parts.length >= 8) {
-                    int id = Integer.parseInt(parts[0]);
-                    int countryId = Integer.parseInt(parts[1]);
-                    String number = parts[2];
-                    String name = parts[3];
-                    String arrivalDate = parts[4];
-                    String departureDate = parts[5];
-                    String status = parts[6];
-                    String operatingSegment = parts[7];
+            String choice = scanner.nextLine();
 
-                    Ship ship = new Ship(id, countryId, number, name, arrivalDate,
-                            departureDate, status, operatingSegment);
-                    ships.add(ship);
-                }
+            switch (choice) {
+                case "1":
+                    Ship.loginToShip();
+                    break;
+                case "2":
+                    Ship.dockAtPort();
+                    break;
+                case "3":
+                    Ship.departFromPort();
+                    break;
+                case "4":
+                    System.out.println("Container management coming soon.");
+                    break;
+                case "5":
+                    System.out.println("Exiting Ship Manager.");
+                    return;
+                default:
+                    System.out.println("Invalid choice. Try again.");
             }
-        } catch (IOException e) {
-            System.err.println("Error reading ships: " + e.getMessage());
         }
-        return ships;
-}
+    }
 }
