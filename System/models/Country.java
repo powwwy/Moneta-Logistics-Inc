@@ -1,8 +1,6 @@
-//system/models/country
 package System.models;
 
 import System.handler.DBUtil;
-
 import java.sql.*;
 import java.time.LocalDate;
 import java.util.*;

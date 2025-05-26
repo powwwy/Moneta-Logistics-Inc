@@ -1,6 +1,6 @@
 package System.models;
 
-import System.handler.DBUtil;
+import System.handler.*;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

@@ -1,9 +1,8 @@
 package System;
 
 import System.managers.*;
-import System.handler.*;
+import System.handler.DBUtil;
 import java.sql.*;
-
 
 public class Main {
     public static void main(String[] args) throws SQLException {
@@ -11,7 +10,10 @@ public class Main {
         DBUtil.getConnection();
         Connection conn = DBUtil.getConnection();
 
-        UserManager manager = new UserManager();
+        User manager = new User() {
+            @Override
+            public void showMenu() {}
+        };
         manager.selectUserRole();
     }
 }
