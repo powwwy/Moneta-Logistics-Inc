@@ -1,4 +1,4 @@
-//system/managers/country manager
+//system/managers/country manage
 package System.managers;
 
 import System.models.*;
