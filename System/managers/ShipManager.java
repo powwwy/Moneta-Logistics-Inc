@@ -9,6 +9,7 @@ public class ShipManager extends User{
         super();
     }
 
+    @Override
     public void showMenu() {
         while (true) {
             System.out.println("\n=== Ship Manager Menu ===");

@@ -1,54 +1,34 @@
 package System.models;
 
 import System.handler.DBUtil;
+
 import java.sql.*;
 import java.time.LocalDate;
 import java.util.*;
 
 import static System.models.Container.scanner;
 
-public class Country{
+public class Country {
     private static int currentCountryID = -1;
     public static String currentCountryName = "";
 
     public Country(int countryID, String countryName, String contactNumber, double accountBalance, int managerID, String managerName) {}
 
-    private static void showLoginRegisterMenu(Scanner scanner) {
-
-        System.out.println("\n=== Country Manager Menu ===");
-        System.out.println("1. Register New Country");
-        System.out.println("2. Login as Existing Manager");
-        System.out.println("3. Exit");
-        System.out.print("Choose an option: ");
-        String option = scanner.nextLine();
-
-        switch (option) {
-            case "1" -> registerNewCountry(scanner);
-            case "2" -> loginExistingManager(scanner);
-            case "3" -> {
-                System.out.println("Exiting...");
-                System.exit(0);
-            }
-            default -> System.out.println("Invalid option, try again.");
-        }
-    }
-
-    private static void registerNewCountry(Scanner scanner) {
+    public static void registerNewCountry(Scanner scanner) {
         try (Connection conn = DBUtil.getConnection()) {
             System.out.print("Enter country name: ");
             String name = scanner.nextLine();
 
-            System.out.print("Enter country contact number: ");
+            System.out.print("Enter contact number: ");
             String contactNumber = scanner.nextLine();
 
             double accountBalance = 0.0;
 
-            // Generate a random Manager ID
             Random rand = new Random();
             String managerID = "CMGR-" + (10000 + rand.nextInt(90000));
             System.out.println("Generated Manager ID: " + managerID);
 
-            System.out.print("Enter country manager name: ");
+            System.out.print("Enter manager name: ");
             String managerName = scanner.nextLine();
 
             String sql = "INSERT INTO Country (country_name, contactNumber, accountBalance, managerID, managerName) VALUES (?, ?, ?, ?, ?)";
@@ -65,18 +45,18 @@ public class Country{
                     if (rs.next()) {
                         currentCountryID = rs.getInt(1);
                         currentCountryName = name;
-                        System.out.println("New country registered. Your manager ID is: " + managerID);
+                        System.out.println("Registered. Your manager ID is: " + managerID);
                     }
                 } else {
-                    System.out.println("Failed to register country.");
+                    System.out.println("Registration failed.");
                 }
             }
         } catch (SQLException e) {
-            System.err.println("Error registering country: " + e.getMessage());
+            System.err.println("Registration error: " + e.getMessage());
         }
     }
 
-    private static void loginExistingManager(Scanner scanner) {
+    public static void loginExistingManager(Scanner scanner) {
         try (Connection conn = DBUtil.getConnection()) {
             System.out.print("Enter your manager ID: ");
             String managerID = scanner.nextLine();
@@ -84,7 +64,6 @@ public class Country{
             String sql = "SELECT countryID, country_name FROM Country WHERE managerID = ?";
             try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
                 pstmt.setString(1, managerID);
-
                 ResultSet rs = pstmt.executeQuery();
                 if (rs.next()) {
                     currentCountryID = rs.getInt("countryID");
@@ -95,7 +74,7 @@ public class Country{
                 }
             }
         } catch (SQLException e) {
-            System.err.println("Error logging in: " + e.getMessage());
+            System.err.println("Login error: " + e.getMessage());
         }
     }
 
@@ -166,49 +145,11 @@ public class Country{
                 double balance = rs.getDouble("accountBalance");
                 System.out.printf("Account Balance for %s: $%.2f%n", currentCountryName, balance);
             } else {
-                System.out.println("Account information not found.");
+                System.out.println("Account info not found.");
             }
         } catch (SQLException e) {
-            System.err.println("Error retrieving account balance: " + e.getMessage());
+            System.err.println("Error retrieving balance: " + e.getMessage());
         }
-    }
-
-    public static void logout() {
-        currentCountryID = -1;
-        currentCountryName = "";
-        System.out.println("Logged out successfully.");
-    }
-
-    public static boolean isLoggedIn() {
-        return currentCountryID != -1;
-    }
-
-    public static int getCurrentCountryID() {
-        return currentCountryID;
-    }
-
-    public static List<Country> loadCountries() {
-        List<Country> countries = new ArrayList<>();
-        String query = "SELECT * FROM Country";
-
-        try (Connection conn = DBUtil.getConnection();
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(query)) {
-
-            while (rs.next()) {
-                Country country = new Country(
-                        rs.getInt("countryID"),
-                        rs.getString("country_name"),
-                        rs.getString("contactNumber"),
-                        rs.getDouble("accountBalance"),
-                        rs.getInt("managerID"),
-                        rs.getString("managerName"));
-                countries.add(country);
-            }
-        } catch (SQLException e) {
-            System.err.println("Error loading countries: " + e.getMessage());
-        }
-        return countries;
     }
 
     public static void updateShip() {
@@ -224,7 +165,7 @@ public class Country{
             if (rs.next()) {
                 String currentName = rs.getString("name");
                 System.out.println("Current name: " + currentName);
-                System.out.print("Do you want to update the name? (y/n): ");
+                System.out.print("Update name? (y/n): ");
                 String updateName = scanner.nextLine();
                 String newName = currentName;
                 if (updateName.equalsIgnoreCase("y")) {
@@ -252,7 +193,7 @@ public class Country{
                 updateStmt.setString(6, shipID);
                 updateStmt.executeUpdate();
 
-                System.out.println("Ship updated successfully.");
+                System.out.println("Ship updated.");
             } else {
                 System.out.println("Ship not found.");
             }
@@ -274,7 +215,7 @@ public class Country{
             if (rs.next()) {
                 String currentName = rs.getString("portName");
                 System.out.println("Current name: " + currentName);
-                System.out.print("Do you want to update the name? (y/n): ");
+                System.out.print("Update name? (y/n): ");
                 String updateName = scanner.nextLine();
                 String newName = currentName;
                 if (updateName.equalsIgnoreCase("y")) {
@@ -288,7 +229,7 @@ public class Country{
                 updateStmt.setString(2, portNumber);
                 updateStmt.executeUpdate();
 
-                System.out.println("Port updated successfully.");
+                System.out.println("Port updated.");
             } else {
                 System.out.println("Port not found.");
             }
@@ -319,12 +260,26 @@ public class Country{
                 updateStmt.setString(2, managerID);
                 updateStmt.executeUpdate();
 
-                System.out.println("Balance updated successfully.");
+                System.out.println("Balance updated.");
             } else {
                 System.out.println("Country not found.");
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    public static void logout() {
+        currentCountryID = -1;
+        currentCountryName = "";
+        System.out.println("Logged out successfully.");
+    }
+
+    public static boolean isLoggedIn() {
+        return currentCountryID != -1;
+    }
+
+    public static int getCurrentCountryID() {
+        return currentCountryID;
     }
 }
