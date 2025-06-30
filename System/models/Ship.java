@@ -1,114 +1,159 @@
 package System.models;
 
 import System.handler.DBUtil;
-
 import java.sql.*;
 import java.util.Scanner;
 
+// --- Entity class (Single Responsibility: Represents Ship data) ---
+class ShipData {
+    private String number;
+    private String name;
+    private String status;
+
+    public ShipData(String number, String name, String status) {
+        this.number = number;
+        this.name = name;
+        this.status = status;
+    }
+
+    public String getNumber() { return number; }
+    public String getName() { return name; }
+    public String getStatus() { return status; }
+    public void setStatus(String status) { this.status = status; }
+}
+
+// --- Interface Segregation & Dependency Inversion ---
+interface ShipRepository {
+    ShipData findByNumber(String number);
+    boolean updateStatus(String number, String status);
+}
+
+interface PortRepository {
+    boolean exists(String portNumber);
+}
+
+// --- Repositories (Single Responsibility) ---
+class JdbcShipRepository implements ShipRepository {
+    @Override
+    public ShipData findByNumber(String number) {
+        try (Connection conn = DBUtil.getConnection()) {
+            String sql = "SELECT * FROM ships WHERE number = ?";
+            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                stmt.setString(1, number);
+                ResultSet rs = stmt.executeQuery();
+                if (rs.next()) {
+                    return new ShipData(
+                        rs.getString("number"),
+                        rs.getString("name"),
+                        rs.getString("status")
+                    );
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Error finding ship: " + e.getMessage());
+        }
+        return null;
+    }
+
+    @Override
+    public boolean updateStatus(String number, String status) {
+        try (Connection conn = DBUtil.getConnection()) {
+            String sql = "UPDATE ships SET status = ? WHERE number = ?";
+            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                stmt.setString(1, status);
+                stmt.setString(2, number);
+                return stmt.executeUpdate() > 0;
+            }
+        } catch (SQLException e) {
+            System.out.println("Error updating status: " + e.getMessage());
+            return false;
+        }
+    }
+}
+
+class JdbcPortRepository implements PortRepository {
+    @Override
+    public boolean exists(String portNumber) {
+        try (Connection conn = DBUtil.getConnection()) {
+            String sql = "SELECT 1 FROM ports WHERE portNumber = ?";
+            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                stmt.setString(1, portNumber);
+                ResultSet rs = stmt.executeQuery();
+                return rs.next();
+            }
+        } catch (SQLException e) {
+            System.out.println("Error checking port: " + e.getMessage());
+            return false;
+        }
+    }
+}
+
+// --- Business Logic (Single Responsibility + Open/Closed) ---
+class ShipService {
+    private final ShipRepository shipRepo;
+    private final PortRepository portRepo;
+    private ShipData currentShip;
+
+    public ShipService(ShipRepository shipRepo, PortRepository portRepo) {
+        this.shipRepo = shipRepo;
+        this.portRepo = portRepo;
+    }
+
+    public void loginToShip(String shipNumber) {
+        currentShip = shipRepo.findByNumber(shipNumber);
+        if (currentShip != null) {
+            System.out.println("Successfully logged in to ship: " + currentShip.getName());
+        } else {
+            System.out.println("Ship Number not found.");
+        }
+    }
+
+    public void dockAtPort(String portNumber) {
+        if (!isLoggedIn()) return;
+
+        if (!portRepo.exists(portNumber)) {
+            System.out.println("Port Number not found.");
+            return;
+        }
+
+        if (shipRepo.updateStatus(currentShip.getNumber(), "Docked")) {
+            currentShip.setStatus("Docked");
+            System.out.println("Ship docked at port " + portNumber + ".");
+        } else {
+            System.out.println("Failed to dock the ship.");
+        }
+    }
+
+    public void departFromPort() {
+        if (!isLoggedIn()) return;
+
+        if (!"Docked".equalsIgnoreCase(currentShip.getStatus())) {
+            System.out.println("Ship is not currently docked.");
+            return;
+        }
+
+        if (shipRepo.updateStatus(currentShip.getNumber(), "Departed")) {
+            currentShip.setStatus("Departed");
+            System.out.println("Ship has departed.");
+        } else {
+            System.out.println("Failed to update ship status.");
+        }
+    }
+
+    private boolean isLoggedIn() {
+        if (currentShip == null) {
+            System.out.println("You need to login to a ship first.");
+            return false;
+        }
+        return true;
+    }
+}
+
+// --- User Interface (Handles user input only) ---
 public class Ship {
     private static final Scanner scanner = new Scanner(System.in);
-    private static String currentShipNumber = null;
-
-    public static void loginToShip() {
-        System.out.print("Enter your Ship Number: ");
-        currentShipNumber = scanner.nextLine();
-
-        try (Connection conn = DBUtil.getConnection()) {
-            String checkQuery = "SELECT * FROM ships WHERE number = ?";
-            try (PreparedStatement stmt = conn.prepareStatement(checkQuery)) {
-                stmt.setString(1, currentShipNumber);
-                try (ResultSet rs = stmt.executeQuery()) {
-                    if (rs.next()) {
-                        System.out.println("Successfully logged in to ship: " + rs.getString("name"));
-                    } else {
-                        System.out.println("Ship Number not found.");
-                        currentShipNumber = null;
-                    }
-                }
-            }
-        } catch (SQLException e) {
-            System.out.println("Error accessing ship: " + e.getMessage());
-            currentShipNumber = null;
-        }
-    }
-
-    public static void dockAtPort() {
-        if (currentShipNumber == null) {
-            System.out.println("You need to login to a ship first.");
-            return;
-        }
-
-        System.out.print("Enter Port Number to dock at: ");
-        String portNumber = scanner.nextLine();
-
-        try (Connection conn = DBUtil.getConnection()) {
-            // Check if port exists
-            String portCheckQuery = "SELECT * FROM ports WHERE portNumber = ?";
-            try (PreparedStatement portStmt = conn.prepareStatement(portCheckQuery)) {
-                portStmt.setString(1, portNumber);
-                try (ResultSet rs = portStmt.executeQuery()) {
-                    if (!rs.next()) {
-                        System.out.println("Port Number not found.");
-                        return;
-                    }
-                }
-            }
-
-            // Update ship status only (don't save port info directly)
-            String updateShip = "UPDATE ships SET status = 'Docked' WHERE number = ?";
-            try (PreparedStatement updateStmt = conn.prepareStatement(updateShip)) {
-                updateStmt.setString(1, currentShipNumber);
-                int rows = updateStmt.executeUpdate();
-                if (rows > 0) {
-                    System.out.println("Ship docked at port " + portNumber + ". (Note: Not permanently linked)");
-                } else {
-                    System.out.println("Failed to dock the ship.");
-                }
-            }
-        } catch (SQLException e) {
-            System.out.println("Error docking ship: " + e.getMessage());
-        }
-    }
-
-    public static void departFromPort() {
-        if (currentShipNumber == null) {
-            System.out.println("You need to login to a ship first.");
-            return;
-        }
-
-        try (Connection conn = DBUtil.getConnection()) {
-            String checkQuery = "SELECT status FROM ships WHERE number = ?";
-            try (PreparedStatement checkStmt = conn.prepareStatement(checkQuery)) {
-                checkStmt.setString(1, currentShipNumber);
-                try (ResultSet rs = checkStmt.executeQuery()) {
-                    if (rs.next()) {
-                        String status = rs.getString("status");
-                        if (!status.equalsIgnoreCase("Docked")) {
-                            System.out.println("Ship is not currently docked.");
-                            return;
-                        }
-                    } else {
-                        System.out.println("Ship not found.");
-                        return;
-                    }
-                }
-            }
-
-            String updateShip = "UPDATE ships SET status = 'Departed' WHERE number = ?";
-            try (PreparedStatement updateStmt = conn.prepareStatement(updateShip)) {
-                updateStmt.setString(1, currentShipNumber);
-                int rows = updateStmt.executeUpdate();
-                if (rows > 0) {
-                    System.out.println("Ship has departed.");
-                } else {
-                    System.out.println("Failed to update ship status.");
-                }
-            }
-
-        } catch (SQLException e) {
-            System.out.println("Error departing ship: " + e.getMessage());
-        }
-    }
+    private static final ShipService shipService =
+        new ShipService(new JdbcShipRepository(), new JdbcPortRepository());
 
     public static void shipMenu() {
         while (true) {
@@ -124,13 +169,15 @@ public class Ship {
 
             switch (choice) {
                 case "1":
-                    loginToShip();
+                    System.out.print("Enter your Ship Number: ");
+                    shipService.loginToShip(scanner.nextLine());
                     break;
                 case "2":
-                    dockAtPort();
+                    System.out.print("Enter Port Number to dock at: ");
+                    shipService.dockAtPort(scanner.nextLine());
                     break;
                 case "3":
-                    departFromPort();
+                    shipService.departFromPort();
                     break;
                 case "4":
                     System.out.println("Container management coming soon.");
@@ -142,5 +189,9 @@ public class Ship {
                     System.out.println("Invalid choice. Try again.");
             }
         }
+    }
+
+    public static void main(String[] args) {
+        shipMenu();
     }
 }

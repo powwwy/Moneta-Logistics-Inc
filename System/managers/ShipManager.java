@@ -1,9 +1,45 @@
 package System.managers;
-import System.models.Ship;
+
 import java.util.Scanner;
 
-public class ShipManager extends User{
+// === Abstracted Ship Operations ===
+interface ShipService {
+    void execute();
+}
+
+class ShipLogin implements ShipService {
+    public void execute() {
+        System.out.println("[LOGIN] Ship login logic goes here.");
+        // Ship.loginToShip(); // Place real logic here
+    }
+}
+
+class ShipDock implements ShipService {
+    public void execute() {
+        System.out.println("[DOCK] Ship dock logic goes here.");
+        // Ship.dockAtPort(); // Place real logic here
+    }
+}
+
+class ShipDepart implements ShipService {
+    public void execute() {
+        System.out.println("[DEPART] Ship depart logic goes here.");
+        // Ship.departFromPort(); // Place real logic here
+    }
+}
+
+// === Base User class (simulating your system) ===
+abstract class User {
+    public abstract void showMenu();
+}
+
+// === ShipManager using SOLID ===
+public class ShipManager extends User {
     private static final Scanner scanner = new Scanner(System.in);
+
+    private final ShipService loginService = new ShipLogin();
+    private final ShipService dockService = new ShipDock();
+    private final ShipService departService = new ShipDepart();
 
     public ShipManager() {
         super();
@@ -24,13 +60,13 @@ public class ShipManager extends User{
 
             switch (choice) {
                 case "1":
-                    Ship.loginToShip();
+                    loginService.execute();  // Open/Closed principle
                     break;
                 case "2":
-                    Ship.dockAtPort();
+                    dockService.execute();
                     break;
                 case "3":
-                    Ship.departFromPort();
+                    departService.execute();
                     break;
                 case "4":
                     System.out.println("Container management coming soon.");
