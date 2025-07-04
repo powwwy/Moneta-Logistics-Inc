@@ -1,0 +1,124 @@
+/* ================= GLOBAL ================= */
+.root {
+    -fx-font-family: "Segoe UI", sans-serif;
+    -fx-background-color: linear-gradient(to bottom, #e8edf2, #dce3ea);
+}
+
+/* ================= LABELS ================= */
+.label {
+    -fx-font-size: 14px;
+    -fx-text-fill: #2f3e4e;
+    -fx-padding: 2px 0;
+}
+
+.label-title, .heading {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1f2d3d;
+    -fx-padding: 10px 0;
+}
+
+/* ================= TEXT FIELDS ================= */
+.text-field, .password-field {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #cfd8dc;
+    -fx-border-width: 1px;
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+    -fx-padding: 8px;
+    -fx-font-size: 14px;
+    -fx-text-fill: #2f3e4e;
+}
+
+.text-field:focused, .password-field:focused {
+    -fx-border-color: #42a5f5;
+    -fx-effect: dropshadow(gaussian, rgba(66,165,245,0.3), 4, 0, 0, 2);
+}
+
+/* ================= BUTTONS ================= */
+.button {
+    -fx-background-color: linear-gradient(to right, #007bff, #339af0);
+    -fx-background-radius: 6px;
+    -fx-border-radius: 6px;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 10px 20px;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 2, 0, 0, 1);
+    -fx-font-size: 14px;
+}
+
+.button:hover {
+    -fx-background-color: linear-gradient(to right, #005ecb, #1c84e3);
+}
+
+.button:pressed {
+    -fx-background-color: #004ba0;
+}
+
+/* ================= TABLES ================= */
+.table-view {
+    -fx-background-color: white;
+    -fx-border-color: #d1d9e6;
+    -fx-background-radius: 8px;
+    -fx-padding: 10px;
+    -fx-table-cell-border-color: #e3eaf3;
+    -fx-font-size: 13px;
+}
+
+.table-view .column-header {
+    -fx-background-color: #f0f4f8;
+    -fx-border-color: #dce3ea;
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+    -fx-padding: 6px 10px;
+}
+
+.table-view .table-row-cell {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+.table-view .table-row-cell:filled:selected {
+    -fx-background-color: #d0e3fa;
+}
+
+/* ================= COMBO BOXES ================= */
+.combo-box, .choice-box {
+    -fx-background-color: white;
+    -fx-border-color: #b0bec5;
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+    -fx-padding: 5px;
+    -fx-font-size: 13px;
+}
+
+.combo-box:focused, .choice-box:focused {
+    -fx-border-color: #42a5f5;
+    -fx-effect: dropshadow(gaussian, rgba(66,165,245,0.3), 3, 0, 0, 2);
+}
+
+/* ================= PANES ================= */
+#loginPane, .login-pane {
+    -fx-background-color: white;
+    -fx-border-color: #ced4da;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+    -fx-padding: 25px;
+    -fx-spacing: 12px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 4);
+}
+
+/* ================= STATUS LABEL ================= */
+#statusLabel {
+    -fx-text-fill: #388e3c;
+    -fx-font-style: italic;
+    -fx-padding: 6px 0;
+}
+
+/* ================= ERROR/ALERT LABEL ================= */
+.error-label {
+    -fx-text-fill: #c0392b;
+    -fx-font-size: 13px;
+    -fx-font-style: italic;
+}
