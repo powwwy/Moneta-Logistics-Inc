@@ -28,7 +28,7 @@ public class Country {
             String managerID = "CMGR-" + (10000 + rand.nextInt(90000));
             System.out.println("Generated Manager ID: " + managerID);
 
-            System.out.print("Enter manager name: ");
+            System.out.print("Enter manager's name: ");
             String managerName = scanner.nextLine();
 
             String sql = "INSERT INTO Country (country_name, contactNumber, accountBalance, managerID, managerName) VALUES (?, ?, ?, ?, ?)";
