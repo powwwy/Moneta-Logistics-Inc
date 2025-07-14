@@ -45,7 +45,7 @@ public class Country {
                     if (rs.next()) {
                         currentCountryID = rs.getInt(1);
                         currentCountryName = name;
-                        System.out.println("Registered. Your manager ID is: " + managerID);
+                        System.out.println("Successfully registered. Your manager ID is: " + managerID);
                     }
                 } else {
                     System.out.println("Registration failed.");
