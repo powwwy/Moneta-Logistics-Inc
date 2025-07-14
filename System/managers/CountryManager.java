@@ -20,7 +20,7 @@ public class CountryManager extends User {
         while (running) {
             System.out.println("\n=== Country Management ===");
             System.out.println("1. Register a New Country");
-            System.out.println("2. Login as Manager");
+            System.out.println("2. Login as an existing Manager");
             System.out.println("3. Exit");
             System.out.print("Choose an option: ");
             String choice = scanner.nextLine();
