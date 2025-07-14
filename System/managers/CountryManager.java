@@ -50,7 +50,7 @@ public class CountryManager extends User {
             System.out.println("4. Update Ship");
             System.out.println("5. Update Port");
             System.out.println("6. Update Balance");
-            System.out.println("7. Logout");
+            System.out.println("7. Log-out");
             System.out.print("Choose an option: ");
             String option = scanner.nextLine();
 
